@@ -1,0 +1,145 @@
+openapi: 3.0.0
+info:
+  title: PrimeTrade Intern Assignment API
+  version: 1.0.0
+  description: Scalable REST API with Authentication & Role-Based Access
+servers:
+  - url: http://localhost:5000/api/v1
+    description: Local development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new user
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [USER, ADMIN]
+      responses:
+        '201':
+          description: Created
+        '400':
+          description: Bad request
+  /auth/login:
+    post:
+      summary: Login
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Success
+        '401':
+          description: Unauthorized
+  /auth/me:
+    get:
+      summary: Get current authenticated user details
+      responses:
+        '200':
+          description: Success
+
+  /tasks:
+    get:
+      summary: Get all tasks (User's own tasks, Admin gets all)
+      responses:
+        '200':
+          description: Success
+    post:
+      summary: Create a new task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                status:
+                  type: string
+                  enum: [PENDING, IN_PROGRESS, COMPLETED]
+      responses:
+        '201':
+          description: Created
+
+  /tasks/{id}:
+    get:
+      summary: Get a task by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
+    put:
+      summary: Update a task
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                description:
+                  type: string
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Success
+    delete:
+      summary: Delete a task
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Success
